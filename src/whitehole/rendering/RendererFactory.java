@@ -41,45 +41,45 @@ public final class RendererFactory {
         "plantd", "repeattimerswitchingblock", "simplenormalmapobj", "sunshademapparts", "switchingmoveblock",
         "tripodbossfixparts", "tripodbossrailmoveparts", "tripodbossrotateparts"
     };
-    
+
     private static final String[] AREA_SHAPE_NAMES = { "baseorigincube", "centerorigincube", "sphere", "cylinder", "bowl" };
-    
+
     // -------------------------------------------------------------------------------------------------------------------------
-    
+
     public static GLRenderer createDummyCubeRenderer() {
         return new CubeRenderer(100f, new Color4(0.5f, 0.5f, 1f, 1f), new Color4(0f, 0f, 0.8f, 1f), true);
     }
-    
+
     public static GLRenderer tryCreateBmdRenderer(GLRenderer.RenderInfo info, String objModelName) {
         BmdRenderer bmdRenderer = new BmdRenderer(info, objModelName);
 
         if (bmdRenderer.isValidBmdModel()) {
             return bmdRenderer;
         }
-        
+
         return createDummyCubeRenderer();
     }
-    
+
     public static GLRenderer tryCreateBtiRenderer(GLRenderer.RenderInfo info, String objModelName, Vec3f pt1, Vec3f pt2, boolean vertical) {
         BtiRenderer bmdRenderer = new BtiRenderer(info, objModelName, pt1, pt2, vertical);
 
         if (bmdRenderer.isValidBtiTexture()) {
             return bmdRenderer;
         }
-        
+
         return createDummyCubeRenderer();
     }
-    
+
     public static GLRenderer tryCreateMultiRenderer(GLRenderer.RenderInfo info, MultiRendererInfo ... multiInfos) {
         List<MultiRendererInfo> actualMultiInfos = new ArrayList(multiInfos.length);
-        
+
         for (MultiRendererInfo multiInfo : multiInfos) {
             if (Whitehole.isExistObjectDataArc(multiInfo.modelName)) {
                 actualMultiInfos.add(multiInfo);
                 multiInfo.renderer = new BmdRenderer(info, multiInfo.modelName);
             }
         }
-        
+
         if (actualMultiInfos.isEmpty()) {
             return createDummyCubeRenderer();
         }
@@ -87,10 +87,10 @@ public final class RendererFactory {
             return new MultiRenderer(actualMultiInfos);
         }
     }
-    
+
     // -------------------------------------------------------------------------------------------------------------------------
     // Model name substitution
-    
+
     private static String getAreaShapeModelName(AbstractObj obj) {
         if (obj.objdbInfo.areaShape().equalsIgnoreCase("Any")) {
             int areaShapeNo = (short)obj.data.getOrDefault("AreaShapeNo", (short)-1);
@@ -106,10 +106,14 @@ public final class RendererFactory {
             return obj.objdbInfo.areaShape().toLowerCase();
         }
     }
-    
+
+    private static String getGravityShapeModelName(GravityObj obj) {
+        return obj.name.toLowerCase();
+    }
+
     public static String getSubstitutedModelName(String objModelName, AbstractObj obj) {
         String lowerObjModelName = objModelName.toLowerCase();
-        
+
         // Areas and Cameras do not use models, but we can process their model keys already
         if (obj instanceof AreaObj) {
             return String.format("areaobj_%s", getAreaShapeModelName(obj));
@@ -117,30 +121,33 @@ public final class RendererFactory {
         else if (obj instanceof CameraObj) {
             return String.format("cameraobj_%s", getAreaShapeModelName(obj));
         }
+        else if (obj instanceof GravityObj gObj) {
+            return String.format("gravityobj_%s", getGravityShapeModelName(gObj));
+        }
         // Some objects are programmed to load an indexed model
         else if (Arrays.binarySearch(SHAPE_MODEL_COMPATIBILITY, lowerObjModelName) >= 0) {
             int shapeModelNo = obj.data.getShort("ShapeModelNo", (short)-1);
             return String.format("%s%02d", objModelName, shapeModelNo);
         }
-        
+
         switch(lowerObjModelName) {
             case "clipareaboxbottomhighmodel":
                 return "ClipAreaBoxBottom";
             case "clipareaboxcenterhighmodel":
                 return "ClipAreaBoxCenter";
         }
-        
+
         return ModelSubstitutions.getSubstitutedModelName(objModelName);
     }
-    
+
     // -------------------------------------------------------------------------------------------------------------------------
     // Cache key substitution
-    
+
     public static String getSubstitutedCacheKey(String objModelName, AbstractObj obj) {
         objModelName = objModelName.toLowerCase();
 
         // Their cache keys match their objModelName that was created by getSubstitutedModelName
-        if (obj instanceof AreaObj || obj instanceof CameraObj) {
+        if (obj instanceof AreaObj || obj instanceof CameraObj || obj instanceof GravityObj) {
             return objModelName;
         }
         else if (obj instanceof CutsceneObj) {
@@ -148,9 +155,6 @@ public final class RendererFactory {
         }
         else if (obj instanceof DebugObj) {
             return "debugobj";
-        }
-        else if (obj instanceof GravityObj) {
-            return "gravityobj";
         }
         else if (obj instanceof PositionObj) {
             return "positionobj";
@@ -161,7 +165,7 @@ public final class RendererFactory {
         else if (obj instanceof StageObj) {
             return "stageobj";
         }
-        
+
         String cacheKey = String.format("object_%s", objModelName);
         
         /*switch(objModelName) {
@@ -190,32 +194,32 @@ public final class RendererFactory {
             case "AstroStarPlate":
                 return String.format("%s_%1$d", cacheKey, obj.data.get("Obj_arg0"));
         }*/
-        
+
         return cacheKey;
     }
-    
+
     // -------------------------------------------------------------------------------------------------------------------------
     // Renderer creation
-    
+
     public static GLRenderer createRenderer(GLRenderer.RenderInfo info, String objModelName, AbstractObj obj) {
         GLRenderer renderer;
-        
+
         // Handle simple object renderers first
         renderer = tryCreateRendererForObjectType(info, objModelName, obj);
         if (renderer != null) return renderer;
-        
+
         // Try water planet renderer
         renderer = tryCreateRendererForWaterPlanet(info, objModelName, obj);
         if (renderer != null) return renderer;
-        
+
         // Try create BTI texture renderer
         renderer = tryCreateBtiRenderer(info, objModelName, obj);
         if (renderer != null) return renderer;
-        
+
         // Try create multi-renderer objects
         renderer = tryCreateRendererWithMulti(info, objModelName, obj);
         if (renderer != null) return renderer;
-        
+
         switch(objModelName) {
             /*case "clipareaboxbottom":
                 return new ClippingAreaRenderer(AreaShapeRenderer.Shape.BASE_ORIGIN_BOX);
@@ -230,17 +234,17 @@ public final class RendererFactory {
             case "invisiblewall10x20":
                 return new InvisibleWallRenderer(2.0f, 1.0f);*/
         }
-        
+
         // Try to create a sole model
         renderer = tryCreateBmdRenderer(info, objModelName);
-        
+
         if (renderer instanceof BmdRenderer) {
             tryOffsetBmdRenderer((BmdRenderer)renderer, objModelName, obj);
         }
-        
+
         return renderer;
     }
-    
+
     private static GLRenderer tryCreateRendererForObjectType(GLRenderer.RenderInfo info, String objModelName, AbstractObj obj) {
         if (obj instanceof CutsceneObj) {
             return new CubeRenderer(100f, new Color4(1f, 0.5f, 0.5f), new Color4(1.0f, 1.0f, 0.3f), true);
@@ -249,7 +253,17 @@ public final class RendererFactory {
             return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(0.8f, 0.5f, 0.1f), true);
         }
         else if (obj instanceof GravityObj) {
-            return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(0f, 0.8f, 0f), true);
+            System.out.println(objModelName);
+            switch (objModelName) {
+                case "gravityobj_globalplanegravityinbox":
+                    return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.BASE_ORIGIN_BOX);
+                case "gravityobj_globalplanegravity", "gravityobj_globalpointgravity":
+                    return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.SPHERE);
+                case "gravityobj_globalplanegravityincylinder":
+                    return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.CYLINDER);
+                default:
+                    return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(0f, 0.8f, 0f), true);
+            }
         }
         else if (obj instanceof PositionObj) {
             return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(1f,0.5f,0f), true);
@@ -258,7 +272,7 @@ public final class RendererFactory {
             return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(1f, 0.5f, 1f), true);
         }
         else if (obj instanceof AreaObj) {
-            switch(objModelName) {
+            switch (objModelName) {
                 case "areaobj_baseorigincube":
                     return new AreaShapeRenderer(new Color4(0.3f, 1f, 1f), AreaShapeRenderer.Shape.BASE_ORIGIN_BOX);
                 case "areaobj_centerorigincube":
@@ -284,13 +298,13 @@ public final class RendererFactory {
                 default: return new CubeRenderer(100f, new Color4(0.3f, 0f, 1f), new Color4(0.8f, 0f, 0f), true);
             }
         }
-        
+
         return null;
     }
-    
+
     private static GLRenderer tryCreateRendererForWaterPlanet(GLRenderer.RenderInfo info, String objModelName, AbstractObj obj) {
         boolean isWaterPlanet = false;
-        
+
         for (String waterPlanet : Whitehole.getWaterPlanetList()) {
             if (waterPlanet.equalsIgnoreCase(objModelName)) {
                 objModelName = waterPlanet;
@@ -298,17 +312,17 @@ public final class RendererFactory {
                 break;
             }
         }
-        
+
         if (isWaterPlanet) {
             return tryCreateMultiRenderer(info,
                     new MultiRendererInfo(objModelName),
                     new MultiRendererInfo(objModelName + "Water")
             );
         }
-        
+
         return null;
     }
-    
+
     private static GLRenderer tryCreateBtiRenderer(GLRenderer.RenderInfo info, String btiName, AbstractObj obj) {
         switch(btiName) {
             case "Flag":
@@ -332,10 +346,10 @@ public final class RendererFactory {
             case "FlagKoopaCastle":
                 return tryCreateBtiRenderer(info, btiName, new Vec3f(0f,150f,0f), new Vec3f(0f,-150f,600f), true);
         }
-        
+
         return null;
     }
-    
+
     private static GLRenderer tryCreateRendererWithMulti(GLRenderer.RenderInfo info, String objModelName, AbstractObj obj) {
         switch(objModelName) {
             // Boss
@@ -381,7 +395,7 @@ public final class RendererFactory {
                     new MultiRendererInfo("TombSpider"),
                     new MultiRendererInfo("TombSpiderPlanet")
             );
-            
+
             // Enemy
             case "CocoSambo": return tryCreateMultiRenderer(info,
                     new MultiRendererInfo("CocoSamboBody"),
@@ -461,7 +475,7 @@ public final class RendererFactory {
                     new MultiRendererInfo("WaterBazookaCapsule", new Vec3f(0f, 495f, 0f)),
                     new MultiRendererInfo("MogucchiShooter", new Vec3f(0f, 335f, 0f))
             );
-            
+
             // MapObj
             case "GoroRockCoverCage": return tryCreateMultiRenderer(info,
                     new MultiRendererInfo("GoroRockCoverCage"),
@@ -488,10 +502,10 @@ public final class RendererFactory {
                     new MultiRendererInfo("YoshiFruitStemBig")
             );
         }
-        
+
         return null;
     }
-    
+
     private static void tryOffsetBmdRenderer(BmdRenderer renderer, String objModelName, AbstractObj obj) {
         // Set new vectors here because they reference shared vectors by default
         switch(objModelName) {
