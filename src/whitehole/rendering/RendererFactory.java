@@ -243,11 +243,11 @@ public final class RendererFactory {
             return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(0.8f, 0.5f, 0.1f), true);
         } else if (obj instanceof GravityObj) {
             switch (objModelName) {
-                case "gravityobj_globalplanegravityinbox":
+                case "gravityobj_globalplanegravityinbox", "gravityobj_globalcubegravity", "gravityobj_zerogravitybox":
                     return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.BASE_ORIGIN_BOX);
-                case "gravityobj_globalplanegravity", "gravityobj_globalpointgravity":
+                case "gravityobj_globalplanegravity", "gravityobj_globalpointgravity", "gravityobj_zerogravitysphere":
                     return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.SPHERE);
-                case "gravityobj_globalplanegravityincylinder":
+                case "gravityobj_globalplanegravityincylinder", "gravityobj_globalbarrelgravity", "gravityobj_zerogravitycylinder":
                     return new AreaShapeRenderer(new Color4(0f, 0.8f, 0f), AreaShapeRenderer.Shape.CYLINDER);
                 default:
                     return new CubeRenderer(100f, new Color4(1f, 1f, 1f), new Color4(0f, 0.8f, 0f), true);
