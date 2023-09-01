@@ -3238,6 +3238,11 @@ public class GalaxyEditorForm extends javax.swing.JFrame {
                             if (tgbShowAreas.isSelected())
                                 obj.render(renderInfo);
                             break;
+                        case "GravityObj":
+                            if (tgbShowGravity.isSelected()) {
+                                obj.render(renderInfo);
+                            }
+                            break;
                         case "CameraObj":
                             if (tgbShowCameras.isSelected())
                                 obj.render(renderInfo);
