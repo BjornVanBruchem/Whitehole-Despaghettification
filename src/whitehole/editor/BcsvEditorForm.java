@@ -241,6 +241,11 @@ public class BcsvEditorForm extends javax.swing.JFrame {
         subLightDataZone = new javax.swing.JMenuItem();
         subLightData = new javax.swing.JMenuItem();
         sep2 = new javax.swing.JPopupMenu.Separator();
+        subStageObjInfo = new javax.swing.JMenuItem();
+        subDesignAreaInfo = new javax.swing.JMenuItem();
+        subSoundAreaInfo = new javax.swing.JMenuItem();
+        subSoundObjInfo = new javax.swing.JMenuItem();
+        sep3 = new javax.swing.JPopupMenu.Separator();
         mnuUseResource = new javax.swing.JMenu();
         subURcommon = new javax.swing.JMenuItem();
         subUR1 = new javax.swing.JMenuItem();
@@ -273,7 +278,7 @@ public class BcsvEditorForm extends javax.swing.JFrame {
         subTicoFatCoin = new javax.swing.JMenuItem();
         subTicoShop = new javax.swing.JMenuItem();
         subTicoShopDice = new javax.swing.JMenuItem();
-        sep3 = new javax.swing.JPopupMenu.Separator();
+        sep4 = new javax.swing.JPopupMenu.Separator();
         mniObjectInfluenceTable = new javax.swing.JMenuItem();
         mniRushInfluenceTable = new javax.swing.JMenuItem();
         mniMorphConditionTable = new javax.swing.JMenuItem();
@@ -499,6 +504,40 @@ public class BcsvEditorForm extends javax.swing.JFrame {
         });
         mnuStages.add(subLightData);
         mnuStages.add(sep2);
+
+        subStageObjInfo.setText("Stage Objects");
+        subStageObjInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subStageObjInfoActionPerformed(evt);
+            }
+        });
+        mnuStages.add(subStageObjInfo);
+
+        subDesignAreaInfo.setText("Design Areas");
+        subDesignAreaInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subDesignAreaInfoActionPerformed(evt);
+            }
+        });
+        mnuStages.add(subDesignAreaInfo);
+
+        subSoundAreaInfo.setText("Sound Areas");
+        subSoundAreaInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subSoundAreaInfoActionPerformed(evt);
+            }
+        });
+        mnuStages.add(subSoundAreaInfo);
+
+        subSoundObjInfo.setText("Sound Objects");
+        subSoundObjInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subSoundObjInfoActionPerformed(evt);
+            }
+        });
+        mnuStages.add(subSoundObjInfo);
+
+        mnuStages.add(sep3);
 
         mnuUseResource.setText("UseResource");
 
@@ -743,7 +782,7 @@ public class BcsvEditorForm extends javax.swing.JFrame {
         mnuNPCData.add(subTicoShopDice);
 
         mnuObjects.add(mnuNPCData);
-        mnuObjects.add(sep3);
+        mnuObjects.add(sep4);
 
         mniObjectInfluenceTable.setText("ObjectInfluenceTable");
         mniObjectInfluenceTable.addActionListener(new java.awt.event.ActionListener() {
@@ -1250,6 +1289,46 @@ public class BcsvEditorForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_subLightDataZoneActionPerformed
 
+    private void subStageObjInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subStageObjInfoActionPerformed
+        String stage = getTextInput("Enter the stage's file name: ");
+
+        if (stage != null && !stage.isEmpty()) {
+            String archiveName = String.format("/StageData/%s/%sMap.arc", stage, stage);
+            String bcsvName = "/Stage/jmp/Placement/Common/StageObjInfo";
+            handleShortcut(archiveName, bcsvName);
+        }
+    }//GEN-LAST:event_subStageObjInfoActionPerformed
+
+    private void subDesignAreaInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subDesignAreaInfoActionPerformed
+        String stage = getTextInput("Enter the stage's file name: ");
+
+        if (stage != null && !stage.isEmpty()) {
+            String archiveName = String.format("/StageData/%s/%sDesign.arc", stage, stage);
+            String bcsvName = "/Stage/jmp/Placement/Common/AreaObjInfo";
+            handleShortcut(archiveName, bcsvName);
+        }
+    }//GEN-LAST:event_subDesignAreaInfoActionPerformed
+
+    private void subSoundAreaInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subSoundAreaInfoActionPerformed
+        String stage = getTextInput("Enter the stage's file name: ");
+
+        if (stage != null && !stage.isEmpty()) {
+            String archiveName = String.format("/StageData/%s/%sSound.arc", stage, stage);
+            String bcsvName = "/Stage/jmp/Placement/Common/AreaObjInfo";
+            handleShortcut(archiveName, bcsvName);
+        }
+    }//GEN-LAST:event_subSoundAreaInfoActionPerformed
+
+    private void subSoundObjInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subSoundObjInfoActionPerformed
+        String stage = getTextInput("Enter the stage's file name: ");
+
+        if (stage != null && !stage.isEmpty()) {
+            String archiveName = String.format("/StageData/%s/%sSound.arc", stage, stage);
+            String bcsvName = "/Stage/jmp/Placement/Common/ObjInfo";
+            handleShortcut(archiveName, bcsvName);
+        }
+    }//GEN-LAST:event_subSoundObjInfoActionPerformed
+
     private void subURcommonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subURcommonActionPerformed
         handleUseResourceShortcut("common.bcsv");
     }//GEN-LAST:event_subURcommonActionPerformed
@@ -1337,6 +1416,7 @@ public class BcsvEditorForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator sep1;
     private javax.swing.JPopupMenu.Separator sep2;
     private javax.swing.JPopupMenu.Separator sep3;
+    private javax.swing.JPopupMenu.Separator sep4;
     private javax.swing.JToolBar.Separator spr2;
     private javax.swing.JToolBar.Separator spr3;
     private javax.swing.JToolBar.Separator spr5;
@@ -1397,6 +1477,10 @@ public class BcsvEditorForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem subWorldMapHeapGalaxy;
     private javax.swing.JMenuItem subWorldMapHeapResource;
     private javax.swing.JMenuItem subZoneList;
+    private javax.swing.JMenuItem subStageObjInfo;
+    private javax.swing.JMenuItem subDesignAreaInfo;
+    private javax.swing.JMenuItem subSoundAreaInfo;
+    private javax.swing.JMenuItem subSoundObjInfo;
     public javax.swing.JTextField tbArchiveName;
     public javax.swing.JTextField tbFileName;
     public javax.swing.JTable tblBcsv;
