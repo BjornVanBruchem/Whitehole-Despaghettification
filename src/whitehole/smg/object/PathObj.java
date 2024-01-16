@@ -51,7 +51,7 @@ public class PathObj {
     
     public PathObj(StageArchive stge, int id) {
         pathID = id;
-        name = "Path " + pathID;
+        name = "未入力" + pathID;
         stage = stge;
         data = new Bcsv.Entry();
         displayLists = null;

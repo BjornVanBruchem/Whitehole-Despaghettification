@@ -2250,11 +2250,17 @@ public class GalaxyEditorForm extends javax.swing.JFrame {
                         selectedPathPoint.point1.x += delta.x;
                         selectedPathPoint.point1.y += delta.y;
                         selectedPathPoint.point1.z += delta.z;
+                        selectedPathPoint.point2.x -= delta.x;
+                        selectedPathPoint.point2.y -= delta.y;
+                        selectedPathPoint.point2.z -= delta.z;
                         break;
                     case 2:
                         selectedPathPoint.point2.x += delta.x;
                         selectedPathPoint.point2.y += delta.y;
                         selectedPathPoint.point2.z += delta.z;
+                        selectedPathPoint.point1.x -= delta.x;
+                        selectedPathPoint.point1.y -= delta.y;
+                        selectedPathPoint.point1.z -= delta.z;
                         break;
                 }
 
