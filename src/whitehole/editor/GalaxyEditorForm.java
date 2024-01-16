@@ -1803,6 +1803,7 @@ public class GalaxyEditorForm extends javax.swing.JFrame {
             newobj.data.put("l_id", targetID);
             if (objtype.equals("startinfo")) {
                 newobj.data.put("MarioNo", targetID);
+                newobj.data.put("Camera_id", targetID);
             }
 
             // Add entry and node
