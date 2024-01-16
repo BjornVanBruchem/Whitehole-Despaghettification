@@ -1757,6 +1757,51 @@ public class GalaxyEditorForm extends javax.swing.JFrame {
                 maxUniqueID = uniqueID;
             }
 
+            // Set object id automatically
+            List<String> activeLayers = new ArrayList<>();
+            activeLayers.add("common");
+
+            for (int i = 0; i < 16; i++) {
+                if ((curScenario.getInt(curZone) & (1 << i)) != 0) {
+                    String layer = "Layer" + ((char) ('A' + i));
+                    activeLayers.add(layer.toLowerCase());
+                }
+            }
+
+            List<String> layers = curZoneArc.getLayerNames();
+            List<Integer> existingIDs = new ArrayList<>();
+
+            for (String layer : layers) {
+                if (!activeLayers.contains(layer.toLowerCase()))
+                    continue;
+
+                List<AbstractObj> objects = new ArrayList<>();
+                List<AbstractObj> zoneObjects = curZoneArc.objects.get(layer.toLowerCase());
+                ObjListTreeNode objList = objListTreeNodes.get(objtype);
+
+                for (ObjTreeNode node : objList.children.values()) {
+                    AbstractObj obj = (AbstractObj) node.object;
+                    if (zoneObjects.contains(obj))
+                        objects.add(obj);
+                }
+
+                for (AbstractObj obj : objects) {
+                    int id = obj.data.getInt("l_id");
+
+                    if (existingIDs.contains(id))
+                        continue;
+
+                    existingIDs.add(id);
+                }
+            }
+
+            existingIDs.sort(Integer::compareTo);
+
+            int targetID = 0;
+            while (existingIDs.contains(targetID)) targetID++;
+
+            newobj.data.put("l_id", targetID);
+
             // Add entry and node
             newobj.uniqueID = uniqueID;
             globalObjList.put(uniqueID, newobj);
