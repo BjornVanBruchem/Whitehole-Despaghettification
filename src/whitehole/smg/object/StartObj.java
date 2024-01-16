@@ -49,7 +49,7 @@ public class StartObj extends AbstractObj {
         
         data.put("Obj_arg0", -1);
         data.put("MarioNo", 0);
-        data.put("Camera_id", -1);
+        data.put("Camera_id", 0);
     }
     
     @Override

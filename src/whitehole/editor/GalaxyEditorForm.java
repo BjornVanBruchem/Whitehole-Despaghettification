@@ -1801,6 +1801,9 @@ public class GalaxyEditorForm extends javax.swing.JFrame {
             while (existingIDs.contains(targetID)) targetID++;
 
             newobj.data.put("l_id", targetID);
+            if (objtype.equals("startinfo")) {
+                newobj.data.put("MarioNo", targetID);
+            }
 
             // Add entry and node
             newobj.uniqueID = uniqueID;
